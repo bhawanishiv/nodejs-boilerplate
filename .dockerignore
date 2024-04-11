@@ -1,0 +1,5 @@
+.github
+.vscode
+logs
+node_modules
+scripts
