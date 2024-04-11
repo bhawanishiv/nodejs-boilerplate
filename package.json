@@ -1,8 +1,8 @@
 {
-  "name": "",
-  "description": "",
+  "name": "nodejs-boilerplate",
+  "description": "A simple nodejs boilerplate for server",
   "version": "0.0.1",
-  "repository": "",
+  "repository": "git@github.com:bhawanishiv/nodejs-boilerplate.git",
   "author": "",
   "license": "MIT",
   "private": true,
