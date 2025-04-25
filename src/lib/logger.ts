@@ -1,4 +1,4 @@
-import winston from 'winston';
+import winston, { Logger, transport } from 'winston';
 
 import { ENVIRONMENT } from './env';
 
@@ -9,7 +9,7 @@ const enumerateErrorFormat = winston.format((info) => {
   return info;
 });
 
-const transports = [
+const transports: transport[] = [
   new winston.transports.Console({
     stderrLevels: ['error'],
   }),
@@ -18,13 +18,12 @@ const transports = [
 if (ENVIRONMENT === 'development') {
   transports.push(
     new winston.transports.File({
-      // stderrLevels: ["error"],
       filename: 'logs/info.log',
     }),
   );
 }
 
-const logger = winston.createLogger({
+const logger: Logger = winston.createLogger({
   level: ENVIRONMENT === 'development' ? 'debug' : 'info',
   format: winston.format.combine(
     enumerateErrorFormat(),

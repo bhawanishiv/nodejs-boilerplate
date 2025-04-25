@@ -1,32 +1,46 @@
-FROM node:18-alpine AS base
+FROM oven/bun:1 AS base
+WORKDIR /usr/src/app
+
+# install dependencies into temp directory
+# this will cache them and speed up future builds
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lock /temp/dev/
+RUN cd /temp/dev && bun install --frozen-lockfile
+
+# install with --production (exclude devDependencies)
+RUN mkdir -p /temp/prod
+COPY package.json bun.lock /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile --production
 
 
-FROM base as builder
-
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
-
-COPY . /app
-WORKDIR /app
-RUN yarn install --frozen-lockfile
-RUN yarn build
+# copy node_modules from temp directory
+# then copy all (non-ignored) project files into the image
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
+COPY . .
 
 
+# [optional] tests & build
+ENV NODE_ENV=production
+# RUN bun test
+RUN bun run build
 
-FROM base AS runner
-WORKDIR /app
-ARG PORT=5000
+# copy production dependencies and source code into final image
+FROM base AS release
+COPY --from=install /temp/prod/node_modules node_modules
+COPY --from=prerelease /usr/src/app/dist ./dist/.
+COPY --from=prerelease /usr/src/app/package.json .
+
+
+ARG PORT=8000
 ENV NODE_ENV=production
 
-COPY --from=builder /app/dist /app/dist
-COPY package.json yarn.lock /app/
-RUN yarn install --production
 
-# to add bash in the container
-RUN apk update
-RUN apk upgrade
-RUN apk add bash
+# run the app
+USER bun
+EXPOSE ${PORT}/tcp
 
-EXPOSE ${PORT}
+ENTRYPOINT [ "bun", "run", "dist/index.js" ]
 
-CMD ["node","dist/index.js"]
+
