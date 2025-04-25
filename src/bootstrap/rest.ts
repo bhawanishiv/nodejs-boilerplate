@@ -4,11 +4,11 @@ import cors from 'cors';
 import httpStatus from 'http-status';
 import { Express } from 'express';
 
-import { ENVIRONMENT } from '../lib/env';
-import ApiError from '../lib/ApIError';
-import morgan from '../lib/morgan';
-import errorMiddleware from '../api/middlewares/error';
-import routes from '../api/routes';
+import { ENVIRONMENT } from '@/lib/env';
+import ApiError from '@/lib/api-error';
+import morgan from '@/lib/morgan';
+import errorMiddleware from '@/api/middlewares/error';
+import routes from '@/api/routes';
 
 const rest = (app: Express) => {
   if (ENVIRONMENT !== 'test') {
@@ -26,9 +26,9 @@ const rest = (app: Express) => {
   app.use(bodyParser.urlencoded({ extended: true }));
 
   // enable cors
-  const corsMiddleware = cors({ exposedHeaders: ['X-OpenAI-Org-ID'] });
+  const corsMiddleware = cors({});
   app.use(corsMiddleware);
-  app.options('*', corsMiddleware);
+  app.options(/(.*)/, corsMiddleware);
 
   app.use(routes);
 

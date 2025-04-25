@@ -1,12 +1,12 @@
+import 'module-alias/register';
 import 'source-map-support/register';
 
 import { Server } from 'http';
 import express from 'express';
 
-import logger from './lib/logger';
-import bootstrap from './bootstrap';
-
-import { PORT } from './lib/env';
+import logger from '@/lib/logger';
+import bootstrap from '@/bootstrap';
+import { PORT } from '@/lib/env';
 
 let server: Server;
 const app = express();
