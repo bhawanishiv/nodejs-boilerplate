@@ -4,32 +4,31 @@
 
 ### Run the local development server
 
-`pnpm dev`
+`bun run dev`
 
 ### Build the application
 
-`pnpm build`
+`bun run build`
 
 ### Start a built (transpiled) version locally
 
-`pnpm start`
+`bun run start`
 
 ## Development setup
 
 1. Make sure to have correct Node.js version
-2. Install `pnpm` package manager for installing dependencies.
-3. Add and `.env` file to you project root directory. See `Environment variables` sections for values to add.
-4. Then run `yan dev` to start a local server.
+2. Install `bun` package manager for installing dependencies.
+3. Add and `.env.local` file to you project root directory. See `Environment variables` sections for values to add.
+4. Then run `bun run dev` to start a local server.
 
 ## Environment variables
 
 ```
 NODE_ENV="development"
-PORT=5000
+PORT=8000
 ```
 
 ## Running a local Docker container
 
-Run `docker compose up  -f compose-dev.yml -d` to start a local docker container of the application.
-
-> Note: Use `compose.yml` file if you want to run a docker container with production configuration.
+Run `docker build -t nodejs-boilerplate .` to start a local docker container of the application.
+And then `docker run  nodejs-boilerplate -p 8000:8000` 
